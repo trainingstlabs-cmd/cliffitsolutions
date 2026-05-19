@@ -484,6 +484,8 @@ img { max-width: 100%; display: block; }
     background: var(--dark); padding: 24px 0; z-index: 100;
 }
 .admin-sidebar .logo { padding: 0 24px; margin-bottom: 32px; }
+.admin-sidebar .logo .cliff { color: #ffffff; }
+.admin-sidebar .logo .it { color: var(--accent); }
 .admin-sidebar nav a {
     display: flex; align-items: center; gap: 10px;
     padding: 12px 24px; font-size: 0.9rem; color: rgba(255,255,255,0.55);
