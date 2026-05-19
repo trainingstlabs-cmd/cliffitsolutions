@@ -48,6 +48,12 @@
                         {% if job.salary_range %}
                         <span>&#128176; {{ job.salary_range }}</span>
                         {% endif %}
+                        {% if job.openings and job.openings > 1 %}
+                        <span>&#128101; {{ job.openings }} openings</span>
+                        {% endif %}
+                        {% if job.end_date %}
+                        <span>&#128197; Apply by {{ job.end_date }}</span>
+                        {% endif %}
                     </div>
                 </div>
                 <span class="job-tag">{{ job.experience_level }}</span>

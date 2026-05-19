@@ -66,10 +66,14 @@
                         <p><strong>Experience:</strong> {{ job.experience_level }}</p>
                         <p><strong>Type:</strong> {{ job.job_type }}</p>
                         <p><strong>Category:</strong> {{ job.category }}</p>
+                        <p><strong>Openings:</strong> {{ job.openings if job.openings else 1 }}</p>
                         {% if job.salary_range %}
                         <p><strong>Salary:</strong> {{ job.salary_range }}</p>
                         {% endif %}
                         <p><strong>Posted:</strong> {{ job.created_at[:10] }}</p>
+                        {% if job.end_date %}
+                        <p><strong>Apply By:</strong> {{ job.end_date }}</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>

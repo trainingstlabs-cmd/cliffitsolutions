@@ -401,7 +401,9 @@ class RequestHandler(BaseHTTPRequestHandler):
             "salary_range": data.get("salary_range", ""),
             "description": data["description"],
             "requirements": data.get("requirements", ""),
-            "benefits": data.get("benefits", "")
+            "benefits": data.get("benefits", ""),
+            "openings": int(data.get("openings", 1) or 1),
+            "end_date": data.get("end_date", ""),
         })
         sid = self.flash("Job posted successfully!", "success")
         self.send_redirect("/admin", sid=sid)
@@ -430,6 +432,8 @@ class RequestHandler(BaseHTTPRequestHandler):
             "description": data["description"],
             "requirements": data.get("requirements", ""),
             "benefits": data.get("benefits", ""),
+            "openings": int(data.get("openings", 1) or 1),
+            "end_date": data.get("end_date", ""),
             "is_active": 1 if data.get("is_active") else 0
         })
         sid = self.flash("Job updated!", "success")

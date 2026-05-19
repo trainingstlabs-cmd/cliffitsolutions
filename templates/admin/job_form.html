@@ -67,12 +67,27 @@
                         </div>
                     </div>
 
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="salary_range">Salary Range</label>
+                            <input type="text" id="salary_range" name="salary_range"
+                                   value="{{ job.salary_range if job else '' }}"
+                                   placeholder="e.g., $120,000 - $160,000 / year">
+                            <div class="form-hint">Optional. Leave blank to hide salary info.</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="openings">Number of Openings</label>
+                            <input type="number" id="openings" name="openings" min="1"
+                                   value="{{ job.openings if job and job.openings else 1 }}"
+                                   placeholder="1">
+                        </div>
+                    </div>
+
                     <div class="form-group">
-                        <label for="salary_range">Salary Range</label>
-                        <input type="text" id="salary_range" name="salary_range"
-                               value="{{ job.salary_range if job else '' }}"
-                               placeholder="e.g., $120,000 - $160,000 / year">
-                        <div class="form-hint">Optional. Leave blank to hide salary info.</div>
+                        <label for="end_date">Application End Date</label>
+                        <input type="date" id="end_date" name="end_date"
+                               value="{{ job.end_date if job and job.end_date else '' }}">
+                        <div class="form-hint">Optional. Jobs will be marked as expired after this date.</div>
                     </div>
 
                     <div class="form-group">

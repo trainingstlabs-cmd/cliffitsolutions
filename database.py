@@ -68,11 +68,25 @@ def init_db():
             description TEXT NOT NULL,
             requirements TEXT,
             benefits TEXT,
+            openings INTEGER DEFAULT 1,
+            end_date TEXT,
             is_active INTEGER DEFAULT 1,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             updated_at TEXT DEFAULT CURRENT_TIMESTAMP
         )
     """)
+
+    # Add openings column if missing (existing DBs)
+    try:
+        c.execute("SELECT openings FROM jobs LIMIT 1")
+    except Exception:
+        c.execute("ALTER TABLE jobs ADD COLUMN openings INTEGER DEFAULT 1")
+
+    # Add end_date column if missing (existing DBs)
+    try:
+        c.execute("SELECT end_date FROM jobs LIMIT 1")
+    except Exception:
+        c.execute("ALTER TABLE jobs ADD COLUMN end_date TEXT")
 
     c.execute("""
         CREATE TABLE IF NOT EXISTS contact_submissions (
@@ -279,30 +293,36 @@ def get_job_by_id(job_id):
 
 def create_job(data):
     conn = get_db()
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     conn.execute("""
         INSERT INTO jobs (title, location, job_type, category, experience_level,
-                         salary_range, description, requirements, benefits)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                         salary_range, description, requirements, benefits,
+                         openings, end_date, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         data["title"], data["location"], data["job_type"], data["category"],
         data.get("experience_level", "Mid-Level"), data.get("salary_range", ""),
-        data["description"], data.get("requirements", ""), data.get("benefits", "")
+        data["description"], data.get("requirements", ""), data.get("benefits", ""),
+        data.get("openings", 1), data.get("end_date") or None, now, now
     ))
     conn.commit()
     conn.close()
 
 def update_job(job_id, data):
     conn = get_db()
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     conn.execute("""
         UPDATE jobs SET title=?, location=?, job_type=?, category=?,
             experience_level=?, salary_range=?, description=?,
-            requirements=?, benefits=?, is_active=?, updated_at=?
+            requirements=?, benefits=?, openings=?, end_date=?,
+            is_active=?, updated_at=?
         WHERE id=?
     """, (
         data["title"], data["location"], data["job_type"], data["category"],
         data.get("experience_level", "Mid-Level"), data.get("salary_range", ""),
         data["description"], data.get("requirements", ""), data.get("benefits", ""),
-        data.get("is_active", 1), datetime.utcnow().isoformat(), job_id
+        data.get("openings", 1), data.get("end_date") or None,
+        data.get("is_active", 1), now, job_id
     ))
     conn.commit()
     conn.close()

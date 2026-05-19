@@ -59,8 +59,10 @@
                                 <th>Location</th>
                                 <th>Type</th>
                                 <th>Category</th>
+                                <th>Openings</th>
                                 <th>Status</th>
                                 <th>Posted</th>
+                                <th>End Date</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -71,12 +73,14 @@
                                 <td>{{ job.location }}</td>
                                 <td>{{ job.job_type }}</td>
                                 <td>{{ job.category }}</td>
+                                <td>{{ job.openings if job.openings else 1 }}</td>
                                 <td>
                                     <span class="status-badge {{ 'active' if job.is_active else 'inactive' }}">
                                         {{ 'Active' if job.is_active else 'Inactive' }}
                                     </span>
                                 </td>
                                 <td>{{ job.created_at[:10] }}</td>
+                                <td>{{ job.end_date if job.end_date else '—' }}</td>
                                 <td>
                                     <div class="admin-actions">
                                         <a href="{{ url_for('admin_edit_job', job_id=job.id) }}">Edit</a>
