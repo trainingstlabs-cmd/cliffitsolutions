@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users & Roles | cliffIT Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include "admin/_sidebar.html" %}
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h2>Users & Roles</h2>
+            <a href="{{ url_for('admin_dashboard') }}" style="font-size:0.9rem; color:var(--gray-500);">&larr; Back to Dashboard</a>
+        </div>
+        <div class="admin-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}{% for cat, msg in messages %}<div class="flash-msg {{ cat }}">{{ msg }}</div>{% endfor %}{% endif %}
+            {% endwith %}
+
+            <form method="post" action="{{ url_for('admin_account') }}" class="admin-form">
+                <div class="admin-card">
+                    <h3>Admin Account</h3>
+                    <div class="form-group">
+                        <label for="admin_username">Admin Username</label>
+                        <input type="text" id="admin_username" name="admin_username" value="{{ current_user.username if current_user else '' }}" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="admin_password">New Admin Password</label>
+                            <input type="password" id="admin_password" name="admin_password" placeholder="Leave blank to keep current password">
+                        </div>
+                        <div class="form-group">
+                            <label for="current_password">Current Admin Password</label>
+                            <input type="password" id="current_password" name="current_password" placeholder="Required for admin account changes">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <h3>HR Access</h3>
+                    <p class="form-hint" style="margin-bottom:16px;">HR users can manage job postings and read/mark contact submissions. They cannot edit site settings, services, page content, users, or delete contact submissions.</p>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="hr_username">HR Username</label>
+                            <input type="text" id="hr_username" name="hr_username" value="{{ hr_user.username if hr_user else 'hr' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="hr_password">HR Password</label>
+                            <input type="password" id="hr_password" name="hr_password" placeholder="{{ 'Leave blank to keep current password' if hr_user else 'Set initial HR password' }}">
+                        </div>
+                    </div>
+                    <label style="display:flex; align-items:center; gap:10px; font-size:0.9rem;">
+                        <input type="checkbox" name="hr_enabled" value="1" {% if not hr_user or hr_user.is_active %}checked{% endif %} style="width:auto;">
+                        HR account enabled
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-primary btn-blue" style="margin-top:8px;">Save User Settings</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

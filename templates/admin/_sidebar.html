@@ -6,9 +6,12 @@
     <nav>
         <a href="/admin">&#128202; Dashboard</a>
         <a href="/admin/jobs/new">&#10133; Post New Job</a>
+        {% if session.admin_role == 'admin' %}
         <a href="/admin/services">&#9881; Services</a>
         <a href="/admin/pages">&#128196; Page Content</a>
         <a href="/admin/settings">&#128295; Site Settings</a>
+        <a href="/admin/account">&#128272; Users & Roles</a>
+        {% endif %}
         <a href="/" target="_blank">&#127760; View Website</a>
         <a href="/admin/logout">&#128682; Logout</a>
     </nav>

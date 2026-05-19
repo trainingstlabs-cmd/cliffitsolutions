@@ -17,7 +17,7 @@
         <div class="admin-topbar">
             <h2>Dashboard</h2>
             <div style="display:flex; align-items:center; gap:16px;">
-                <span style="font-size:0.85rem; color:var(--gray-500);">Welcome, {{ session.admin_user }}</span>
+                <span style="font-size:0.85rem; color:var(--gray-500);">Welcome, {{ session.admin_user }} · {{ session.admin_role|upper }}</span>
                 <a href="{{ url_for('admin_new_job') }}" class="btn-primary btn-blue btn-sm">+ Post Job</a>
             </div>
         </div>
@@ -163,11 +163,13 @@
                                                 {{ 'Unread' if c.is_read else 'Read' }}
                                             </button>
                                         </form>
+                                        {% if session.admin_role == 'admin' %}
                                         <form method="post" action="{{ url_for('admin_delete_contact', contact_id=c.id) }}"
                                               style="display:inline;"
                                               onsubmit="return confirm('Delete this contact submission?')">
                                             <button type="submit" class="action-btn action-danger">Delete</button>
                                         </form>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>

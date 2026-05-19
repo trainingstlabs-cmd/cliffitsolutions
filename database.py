@@ -27,6 +27,50 @@ def check_password(password, hashed):
     salt, h = hashed.split("$", 1)
     return hashlib.sha256((salt + password).encode()).hexdigest() == h
 
+def get_user_by_username(username):
+    conn = get_db()
+    user = conn.execute("SELECT * FROM admin_users WHERE username = ?", (username,)).fetchone()
+    conn.close()
+    return user
+
+def get_user_by_role(role):
+    conn = get_db()
+    user = conn.execute("SELECT * FROM admin_users WHERE role = ? ORDER BY id LIMIT 1", (role,)).fetchone()
+    conn.close()
+    return user
+
+def update_user(user_id, username=None, password=None, is_active=None):
+    conn = get_db()
+    if username:
+        conn.execute("UPDATE admin_users SET username = ? WHERE id = ?", (username, user_id))
+    if password:
+        conn.execute("UPDATE admin_users SET password_hash = ? WHERE id = ?", (hash_password(password), user_id))
+    if is_active is not None:
+        conn.execute("UPDATE admin_users SET is_active = ? WHERE id = ?", (1 if is_active else 0, user_id))
+    conn.commit()
+    conn.close()
+
+def upsert_role_user(role, username, password=None, is_active=True):
+    conn = get_db()
+    existing = conn.execute("SELECT * FROM admin_users WHERE role = ? ORDER BY id LIMIT 1", (role,)).fetchone()
+    if existing:
+        conn.execute(
+            "UPDATE admin_users SET username = ?, is_active = ? WHERE id = ?",
+            (username, 1 if is_active else 0, existing["id"])
+        )
+        if password:
+            conn.execute(
+                "UPDATE admin_users SET password_hash = ? WHERE id = ?",
+                (hash_password(password), existing["id"])
+            )
+    else:
+        conn.execute(
+            "INSERT INTO admin_users (username, password_hash, role, is_active) VALUES (?, ?, ?, ?)",
+            (username, hash_password(password or secrets.token_urlsafe(18)), role, 1 if is_active else 0)
+        )
+    conn.commit()
+    conn.close()
+
 # ─── Default site settings ───
 DEFAULT_SETTINGS = {
     "company_name": "cliffIT Solutions",
@@ -58,9 +102,21 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'admin',
+            is_active INTEGER DEFAULT 1,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
         )
     """)
+
+    try:
+        c.execute("SELECT role FROM admin_users LIMIT 1")
+    except Exception:
+        c.execute("ALTER TABLE admin_users ADD COLUMN role TEXT NOT NULL DEFAULT 'admin'")
+
+    try:
+        c.execute("SELECT is_active FROM admin_users LIMIT 1")
+    except Exception:
+        c.execute("ALTER TABLE admin_users ADD COLUMN is_active INTEGER DEFAULT 1")
 
     c.execute("""
         CREATE TABLE IF NOT EXISTS jobs (
@@ -148,9 +204,11 @@ def init_db():
     existing = c.execute("SELECT id FROM admin_users LIMIT 1").fetchone()
     if not existing:
         c.execute(
-            "INSERT INTO admin_users (username, password_hash) VALUES (?, ?)",
-            ("admin", hash_password("cliffIT2026"))
+            "INSERT INTO admin_users (username, password_hash, role, is_active) VALUES (?, ?, ?, ?)",
+            ("admin", hash_password("cliffIT2026"), "admin", 1)
         )
+    else:
+        c.execute("UPDATE admin_users SET role = 'admin', is_active = 1 WHERE id = ?", (existing["id"],))
 
     # Seed default settings
     for key, val in DEFAULT_SETTINGS.items():

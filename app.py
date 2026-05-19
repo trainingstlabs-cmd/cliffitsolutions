@@ -37,7 +37,7 @@ def url_for(endpoint, **kwargs):
         "admin_login": "/admin/login", "admin_logout": "/admin/logout",
         "admin_dashboard": "/admin", "admin_new_job": "/admin/jobs/new",
         "admin_settings": "/admin/settings", "admin_services": "/admin/services",
-        "admin_pages": "/admin/pages",
+        "admin_pages": "/admin/pages", "admin_account": "/admin/account",
     }
     if endpoint == "service_detail":
         return f"/services/{kwargs.get('slug', '')}"
@@ -265,6 +265,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.handle_admin_edit_job_get(int(re.match(r"^/admin/jobs/(\d+)/edit$", path).group(1)))
             elif re.match(r"^/admin/contacts/(\d+)$", path):
                 self.handle_admin_view_contact(int(re.match(r"^/admin/contacts/(\d+)$", path).group(1)))
+            elif path == "/admin/account":
+                self.handle_admin_account_get()
             elif path == "/admin/settings":
                 self.handle_admin_settings_get()
             elif path == "/admin/services":
@@ -302,6 +304,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.handle_admin_toggle_contact_read(int(re.match(r"^/admin/contacts/(\d+)/toggle-read$", path).group(1)))
             elif re.match(r"^/admin/contacts/(\d+)/delete$", path):
                 self.handle_admin_delete_contact(int(re.match(r"^/admin/contacts/(\d+)/delete$", path).group(1)))
+            elif path == "/admin/account":
+                self.handle_admin_account_post()
             elif path == "/admin/settings":
                 self.handle_admin_settings_post()
             elif re.match(r"^/admin/services/([^/]+)/edit$", path):
@@ -407,6 +411,22 @@ class RequestHandler(BaseHTTPRequestHandler):
         sess = self.get_session()
         return sess.get("admin_logged_in", False)
 
+    def _admin_role(self):
+        return self.get_session().get("admin_role", "")
+
+    def _is_super_admin(self):
+        return self._admin_role() == "admin"
+
+    def _can_manage_jobs(self):
+        return self._admin_role() in ("admin", "hr")
+
+    def _can_view_contacts(self):
+        return self._admin_role() in ("admin", "hr")
+
+    def _deny_admin(self):
+        sid = self.flash("You do not have access to that admin area.", "error")
+        self.send_redirect("/admin", sid=sid)
+
     def handle_admin_login_get(self):
         if self._check_admin():
             self.send_redirect("/admin")
@@ -418,13 +438,16 @@ class RequestHandler(BaseHTTPRequestHandler):
         data = self.parse_form()
         username = data.get("username", "")
         password = data.get("password", "")
-        conn = db.get_db()
-        user = conn.execute("SELECT * FROM admin_users WHERE username = ?", (username,)).fetchone()
-        conn.close()
-        if user and db.check_password(password, user["password_hash"]):
+        user = db.get_user_by_username(username)
+        if user and user["is_active"] and db.check_password(password, user["password_hash"]):
             # Create fresh session with admin flag
             sid = str(uuid.uuid4())
-            sessions[sid] = {"admin_logged_in": True, "admin_user": username}
+            sessions[sid] = {
+                "admin_logged_in": True,
+                "admin_user": user["username"],
+                "admin_user_id": user["id"],
+                "admin_role": user["role"],
+            }
             self.send_redirect("/admin", sid=sid)
         else:
             sid = self.flash("Invalid credentials.", "error")
@@ -455,12 +478,18 @@ class RequestHandler(BaseHTTPRequestHandler):
         if not self._check_admin():
             self.send_redirect("/admin/login")
             return
+        if not self._can_manage_jobs():
+            self._deny_admin()
+            return
         html, sid = self.render("admin/job_form.html", job=None, categories=db.get_job_categories())
         self.send_html(html, sid=sid)
 
     def handle_admin_new_job_post(self):
         if not self._check_admin():
             self.send_redirect("/admin/login")
+            return
+        if not self._can_manage_jobs():
+            self._deny_admin()
             return
         data = self.parse_form()
         db.create_job({
@@ -481,6 +510,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         if not self._check_admin():
             self.send_redirect("/admin/login")
             return
+        if not self._can_manage_jobs():
+            self._deny_admin()
+            return
         job = db.get_job_by_id(job_id)
         if not job:
             self.send_redirect("/admin")
@@ -491,6 +523,9 @@ class RequestHandler(BaseHTTPRequestHandler):
     def handle_admin_edit_job_post(self, job_id):
         if not self._check_admin():
             self.send_redirect("/admin/login")
+            return
+        if not self._can_manage_jobs():
+            self._deny_admin()
             return
         data = self.parse_form()
         db.update_job(job_id, {
@@ -512,6 +547,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         if not self._check_admin():
             self.send_redirect("/admin/login")
             return
+        if not self._can_manage_jobs():
+            self._deny_admin()
+            return
         db.delete_job(job_id)
         sid = self.flash("Job deleted.", "success")
         self.send_redirect("/admin", sid=sid)
@@ -519,6 +557,9 @@ class RequestHandler(BaseHTTPRequestHandler):
     def handle_admin_toggle_job(self, job_id):
         if not self._check_admin():
             self.send_redirect("/admin/login")
+            return
+        if not self._can_manage_jobs():
+            self._deny_admin()
             return
         job = db.get_job_by_id(job_id)
         if job:
@@ -535,6 +576,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         if not self._check_admin():
             self.send_redirect("/admin/login")
             return
+        if not self._can_view_contacts():
+            self._deny_admin()
+            return
         contact = db.get_contact_by_id(contact_id)
         if not contact:
             sid = self.flash("Contact submission not found.", "error")
@@ -550,6 +594,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         if not self._check_admin():
             self.send_redirect("/admin/login")
             return
+        if not self._can_view_contacts():
+            self._deny_admin()
+            return
         contact = db.get_contact_by_id(contact_id)
         if contact:
             db.mark_contact_read(contact_id, 0 if contact["is_read"] else 1)
@@ -558,6 +605,9 @@ class RequestHandler(BaseHTTPRequestHandler):
     def handle_admin_delete_contact(self, contact_id):
         if not self._check_admin():
             self.send_redirect("/admin/login")
+            return
+        if not self._is_super_admin():
+            self._deny_admin()
             return
         db.delete_contact(contact_id)
         sid = self.flash("Contact submission deleted.", "success")
@@ -569,6 +619,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         if not self._check_admin():
             self.send_redirect("/admin/login")
             return
+        if not self._is_super_admin():
+            self._deny_admin()
+            return
         settings = db.get_settings()
         html, sid = self.render("admin/settings.html", settings=settings)
         self.send_html(html, sid=sid)
@@ -577,16 +630,88 @@ class RequestHandler(BaseHTTPRequestHandler):
         if not self._check_admin():
             self.send_redirect("/admin/login")
             return
+        if not self._is_super_admin():
+            self._deny_admin()
+            return
         data = self.parse_form()
         db.update_settings(data)
         sid = self.flash("Settings updated!", "success")
         self.send_redirect("/admin/settings", sid=sid)
+
+    # ─── Admin Account & Roles ───
+
+    def handle_admin_account_get(self):
+        if not self._check_admin():
+            self.send_redirect("/admin/login")
+            return
+        if not self._is_super_admin():
+            self._deny_admin()
+            return
+        current_user = db.get_user_by_username(self.get_session().get("admin_user", ""))
+        hr_user = db.get_user_by_role("hr")
+        html, sid = self.render("admin/account.html", current_user=current_user, hr_user=hr_user)
+        self.send_html(html, sid=sid)
+
+    def handle_admin_account_post(self):
+        if not self._check_admin():
+            self.send_redirect("/admin/login")
+            return
+        if not self._is_super_admin():
+            self._deny_admin()
+            return
+
+        data = self.parse_form()
+        current_user = db.get_user_by_username(self.get_session().get("admin_user", ""))
+        if not current_user:
+            sid = self.flash("Your account could not be found. Please log in again.", "error")
+            self.send_redirect("/admin/logout", sid=sid)
+            return
+
+        new_admin_username = data.get("admin_username", "").strip()
+        new_admin_password = data.get("admin_password", "").strip()
+        current_password = data.get("current_password", "")
+        hr_username = data.get("hr_username", "").strip()
+        hr_password = data.get("hr_password", "").strip()
+        hr_enabled = bool(data.get("hr_enabled"))
+
+        changing_admin = (
+            new_admin_username and new_admin_username != current_user["username"]
+        ) or bool(new_admin_password)
+        if changing_admin and not db.check_password(current_password, current_user["password_hash"]):
+            sid = self.flash("Current password is required to change the admin username or password.", "error")
+            self.send_redirect("/admin/account", sid=sid)
+            return
+
+        try:
+            if new_admin_username or new_admin_password:
+                db.update_user(
+                    current_user["id"],
+                    username=new_admin_username or current_user["username"],
+                    password=new_admin_password or None,
+                    is_active=1,
+                )
+                sessions[self._get_sid()]["admin_user"] = new_admin_username or current_user["username"]
+
+            if hr_username:
+                db.upsert_role_user("hr", hr_username, hr_password or None, hr_enabled)
+            elif db.get_user_by_role("hr"):
+                db.update_user(db.get_user_by_role("hr")["id"], is_active=0)
+        except Exception as exc:
+            sid = self.flash(f"Could not update account settings: {exc}", "error")
+            self.send_redirect("/admin/account", sid=sid)
+            return
+
+        sid = self.flash("Account and role settings updated.", "success")
+        self.send_redirect("/admin/account", sid=sid)
 
     # ─── Admin Services ───
 
     def handle_admin_services_get(self):
         if not self._check_admin():
             self.send_redirect("/admin/login")
+            return
+        if not self._is_super_admin():
+            self._deny_admin()
             return
         services, order = db.get_all_services()
         html, sid = self.render("admin/services_list.html", services=services, service_order=order)
@@ -595,6 +720,9 @@ class RequestHandler(BaseHTTPRequestHandler):
     def handle_admin_edit_service_get(self, slug):
         if not self._check_admin():
             self.send_redirect("/admin/login")
+            return
+        if not self._is_super_admin():
+            self._deny_admin()
             return
         svc = db.get_service(slug)
         if not svc:
@@ -606,6 +734,9 @@ class RequestHandler(BaseHTTPRequestHandler):
     def handle_admin_edit_service_post(self, slug):
         if not self._check_admin():
             self.send_redirect("/admin/login")
+            return
+        if not self._is_super_admin():
+            self._deny_admin()
             return
         data = self.parse_form()
         # Parse features from numbered fields
@@ -648,6 +779,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         if not self._check_admin():
             self.send_redirect("/admin/login")
             return
+        if not self._is_super_admin():
+            self._deny_admin()
+            return
         html, sid = self.render("admin/pages_list.html",
                                 editable_pages=self.EDITABLE_PAGES)
         self.send_html(html, sid=sid)
@@ -655,6 +789,9 @@ class RequestHandler(BaseHTTPRequestHandler):
     def handle_admin_edit_page_get(self, page):
         if not self._check_admin():
             self.send_redirect("/admin/login")
+            return
+        if not self._is_super_admin():
+            self._deny_admin()
             return
         if page not in self.EDITABLE_PAGES:
             self.send_redirect("/admin/pages")
@@ -669,6 +806,9 @@ class RequestHandler(BaseHTTPRequestHandler):
     def handle_admin_edit_page_post(self, page):
         if not self._check_admin():
             self.send_redirect("/admin/login")
+            return
+        if not self._is_super_admin():
+            self._deny_admin()
             return
         if page not in self.EDITABLE_PAGES:
             self.send_redirect("/admin/pages")

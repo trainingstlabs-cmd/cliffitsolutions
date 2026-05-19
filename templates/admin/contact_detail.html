@@ -29,11 +29,13 @@
                         <form method="post" action="{{ url_for('admin_toggle_contact_read', contact_id=contact.id) }}" style="display:inline;">
                             <button type="submit" class="action-btn action-neutral">Mark Unread</button>
                         </form>
+                        {% if session.admin_role == 'admin' %}
                         <form method="post" action="{{ url_for('admin_delete_contact', contact_id=contact.id) }}"
                               style="display:inline;"
                               onsubmit="return confirm('Delete this contact submission?')">
                             <button type="submit" class="action-btn action-danger">Delete</button>
                         </form>
+                        {% endif %}
                     </div>
                 </div>
 
