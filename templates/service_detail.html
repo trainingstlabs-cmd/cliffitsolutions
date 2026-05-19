@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ service.title }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{{ url_for('home') }}">Home</a>
+            <span>/</span>
+            <a href="{{ url_for('services') }}">Services</a>
+            <span>/</span>
+            <span style="color:rgba(255,255,255,0.7)">{{ service.title }}</span>
+        </div>
+        <h1>{{ service.title }}</h1>
+        <p>{{ service.tagline }}</p>
+    </div>
+</section>
+
+<section class="svc-detail">
+    <div class="container">
+        <div class="svc-detail-grid">
+            <div class="svc-detail-main">
+                <h2>Overview</h2>
+                {% for para in service.details %}
+                <p>{{ para }}</p>
+                {% endfor %}
+
+                <h2>What We Offer</h2>
+                <div class="svc-features">
+                    {% for feat in service.features %}
+                    <div class="svc-feature fade-up">
+                        <h4>{{ feat.title }}</h4>
+                        <p>{{ feat.desc }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div style="margin-top:48px;">
+                    <a href="{{ url_for('contact') }}?service={{ slug }}" class="btn-primary btn-blue">
+                        Get Started with {{ service.title }}
+                    </a>
+                </div>
+            </div>
+
+            <div class="svc-sidebar">
+                <div class="svc-sidebar-card">
+                    <h3>All Services</h3>
+                    {% for s_slug in service_order %}
+                    <a href="{{ url_for('service_detail', slug=s_slug) }}"
+                       class="{% if s_slug == slug %}active{% endif %}">
+                        {{ services[s_slug].title }}
+                    </a>
+                    {% endfor %}
+                </div>
+                <div class="svc-sidebar-card" style="background:var(--primary); color:#fff;">
+                    <h3 style="color:#fff;">Ready to Talk?</h3>
+                    <p style="font-size:0.9rem; color:rgba(255,255,255,0.8); margin-bottom:16px;">
+                        Our consultants are ready to discuss your needs and build a custom solution.
+                    </p>
+                    <a href="{{ url_for('contact') }}" class="btn-primary btn-sm" style="width:100%; justify-content:center;">
+                        Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

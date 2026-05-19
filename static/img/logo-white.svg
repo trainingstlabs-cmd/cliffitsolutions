@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 44" fill="none">
+  <defs>
+    <linearGradient id="agw" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#c4b5fd"/>
+    </linearGradient>
+    <linearGradient id="pgw" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+  </defs>
+  <!-- Cliff peak icon -->
+  <g transform="translate(2,3)">
+    <path d="M2 36 L14 8 L20 20 L26 2 L34 36Z" fill="rgba(255,255,255,0.85)"/>
+    <path d="M20 20 L26 2 L34 36 L20 36Z" fill="url(#pgw)"/>
+    <circle cx="26" cy="2" r="2.8" fill="#fbbf24"/>
+    <line x1="10" y1="28" x2="5" y2="28" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <line x1="8" y1="32" x2="2" y2="32" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+  </g>
+  <!-- "cliffIT Solutions" as one tight wordmark -->
+  <text y="31" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" letter-spacing="-0.5">
+    <tspan x="40" font-size="26" font-weight="800" fill="#ffffff">cliff</tspan><tspan font-size="26" font-weight="900" fill="url(#agw)">IT</tspan><tspan dx="5" font-size="26" font-weight="300" fill="rgba(255,255,255,0.55)">Solutions</tspan>
+  </text>
+</svg>

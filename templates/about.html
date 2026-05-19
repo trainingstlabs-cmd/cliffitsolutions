@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{{ url_for('home') }}">Home</a><span>/</span>
+            <span style="color:rgba(255,255,255,0.7)">About</span>
+        </div>
+        <h1>{{ pc.header.title if pc.header else 'About cliffIT Solutions' }}</h1>
+        <p>{{ pc.header.subtitle if pc.header else 'Building lasting partnerships through technology excellence and exceptional talent.' }}</p>
+    </div>
+</section>
+
+<!-- Story -->
+<section class="about-section">
+    <div class="container">
+        <div class="about-grid">
+            <div class="about-content fade-up">
+                <span class="section-label">{{ pc.story.label if pc.story else 'Our Story' }}</span>
+                <h2>{{ (pc.story.heading if pc.story else 'Built on a Foundation of <span>Trust &amp; Excellence</span>')|safe }}</h2>
+                <p>{{ pc.story.paragraph1 if pc.story else '' }}</p>
+                <p style="color:var(--gray-500); margin-top:16px;">{{ pc.story.paragraph2 if pc.story else '' }}</p>
+            </div>
+            <div class="about-visual fade-up">
+                <div class="about-visual-stat"><h4>{{ pc.story.stat1_value if pc.story else '2011' }}</h4><p>{{ pc.story.stat1_label if pc.story else 'Year founded in Austin, TX' }}</p></div>
+                <div class="about-visual-stat"><h4>{{ pc.story.stat2_value if pc.story else '1,200+' }}</h4><p>{{ pc.story.stat2_label if pc.story else 'Active consultants nationwide' }}</p></div>
+                <div class="about-visual-stat"><h4>{{ pc.story.stat3_value if pc.story else '98%' }}</h4><p>{{ pc.story.stat3_label if pc.story else 'Client satisfaction rate' }}</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values -->
+<section style="padding:80px 0; background:var(--gray-100);">
+    <div class="container">
+        <div class="fade-up" style="text-align:center; margin-bottom:56px;">
+            <span class="section-label">{{ pc.values.label if pc.values else 'Our Values' }}</span>
+            <h2 class="section-title">{{ pc.values.title if pc.values else 'What Drives Us' }}</h2>
+        </div>
+        {% set v = pc.values if pc.values else {} %}
+        <div class="services-grid">
+            <div class="service-card fade-up">
+                <div class="service-icon blue" style="font-size:1.8rem;">{{ v.v1_icon if v.v1_icon else '&#129309;' }}</div>
+                <h3>{{ v.v1_title if v.v1_title else 'Relationships First' }}</h3>
+                <p>{{ v.v1_text if v.v1_text else '' }}</p>
+            </div>
+            <div class="service-card fade-up">
+                <div class="service-icon green" style="font-size:1.8rem;">{{ v.v2_icon if v.v2_icon else '&#127942;' }}</div>
+                <h3>{{ v.v2_title if v.v2_title else 'Excellence Always' }}</h3>
+                <p>{{ v.v2_text if v.v2_text else '' }}</p>
+            </div>
+            <div class="service-card fade-up">
+                <div class="service-icon purple" style="font-size:1.8rem;">{{ v.v3_icon if v.v3_icon else '&#128161;' }}</div>
+                <h3>{{ v.v3_title if v.v3_title else 'Innovation Forward' }}</h3>
+                <p>{{ v.v3_text if v.v3_text else '' }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Process -->
+<section class="process-section">
+    <div class="container">
+        {% set pr = pc.process if pc.process else {} %}
+        <div class="fade-up" style="text-align:center; margin-bottom:56px;">
+            <span class="section-label">{{ pr.label if pr.label else 'Our Process' }}</span>
+            <h2 class="section-title">{{ pr.title if pr.title else 'How We Deliver Results' }}</h2>
+            <p class="section-subtitle" style="margin-inline:auto;">{{ pr.subtitle if pr.subtitle else '' }}</p>
+        </div>
+        <div class="process-grid">
+            <div class="process-card fade-up">
+                <div class="num">01</div>
+                <h3>{{ pr.step1_title if pr.step1_title else 'Discover & Assess' }}</h3>
+                <p>{{ pr.step1_text if pr.step1_text else '' }}</p>
+            </div>
+            <div class="process-card fade-up">
+                <div class="num">02</div>
+                <h3>{{ pr.step2_title if pr.step2_title else 'Match & Deploy' }}</h3>
+                <p>{{ pr.step2_text if pr.step2_text else '' }}</p>
+            </div>
+            <div class="process-card fade-up">
+                <div class="num">03</div>
+                <h3>{{ pr.step3_title if pr.step3_title else 'Deliver & Optimize' }}</h3>
+                <p>{{ pr.step3_text if pr.step3_text else '' }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-box fade-up">
+            <h2>{{ pc.cta.heading if pc.cta else "Let's Build Something Great Together" }}</h2>
+            <p>{{ pc.cta.text if pc.cta else "Whether you need one expert or an entire team, we're ready to help." }}</p>
+            <a href="{{ url_for('contact') }}" class="btn-white">{{ pc.cta.button_text if pc.cta else 'Get in Touch' }}</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

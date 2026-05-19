@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Content | cliffIT Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include "admin/_sidebar.html" %}
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h2>Page Content</h2>
+            <a href="{{ url_for('admin_dashboard') }}" style="font-size:0.9rem; color:var(--gray-500);">&larr; Back to Dashboard</a>
+        </div>
+        <div class="admin-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}{% for cat, msg in messages %}<div class="flash-msg {{ cat }}">{{ msg }}</div>{% endfor %}{% endif %}
+            {% endwith %}
+
+            <p style="color:var(--gray-500); margin-bottom:24px;">Edit text content on any page of your website. Changes take effect immediately.</p>
+
+            <div class="admin-card">
+                <table class="admin-table">
+                    <thead>
+                        <tr><th>Page</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for slug, name in editable_pages.items() %}
+                        <tr>
+                            <td><strong>{{ name }}</strong></td>
+                            <td>
+                                <a href="/admin/pages/{{ slug }}" class="btn-primary btn-blue btn-sm" style="font-size:0.8rem; padding:6px 16px;">Edit Content</a>
+                                <a href="{{ url_for(slug if slug != 'home' else 'home') }}" target="_blank" style="font-size:0.8rem; color:var(--gray-500); margin-left:12px;">View Page &#8599;</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

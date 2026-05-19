@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}{{ job.title }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{{ url_for('home') }}">Home</a><span>/</span>
+            <a href="{{ url_for('careers') }}">Careers</a><span>/</span>
+            <span style="color:rgba(255,255,255,0.7)">{{ job.title }}</span>
+        </div>
+        <h1>{{ job.title }}</h1>
+        <div style="display:flex; gap:20px; margin-top:12px; flex-wrap:wrap;">
+            <span style="color:rgba(255,255,255,0.7); font-size:0.95rem;">&#128205; {{ job.location }}</span>
+            <span style="color:rgba(255,255,255,0.7); font-size:0.95rem;">&#128188; {{ job.job_type }}</span>
+            <span style="color:rgba(255,255,255,0.7); font-size:0.95rem;">&#128196; {{ job.category }}</span>
+            {% if job.salary_range %}
+            <span style="color:rgba(255,255,255,0.7); font-size:0.95rem;">&#128176; {{ job.salary_range }}</span>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="job-detail-section">
+    <div class="container">
+        <div class="job-detail-grid">
+            <div class="job-detail-main">
+                <h2>Job Description</h2>
+                {% for para in job.description.split('\n') %}
+                {% if para.strip() %}
+                <p>{{ para }}</p>
+                {% endif %}
+                {% endfor %}
+
+                {% if job.requirements %}
+                <h2>Requirements</h2>
+                <ul>
+                    {% for req in job.requirements.split('\n') %}
+                    {% if req.strip() %}
+                    <li>{{ req.strip() }}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if job.benefits %}
+                <h2>Benefits</h2>
+                <ul>
+                    {% for ben in job.benefits.split('\n') %}
+                    {% if ben.strip() %}
+                    <li>{{ ben.strip() }}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <div>
+                <div class="job-apply-card">
+                    <h3>Interested in This Role?</h3>
+                    <p>Send us your details and our recruiting team will reach out within 24 hours.</p>
+                    <a href="{{ url_for('contact') }}?service=careers" class="btn-primary btn-blue" style="width:100%; justify-content:center;">
+                        Apply Now
+                    </a>
+                    <div style="margin-top:20px; text-align:left; font-size:0.85rem; color:var(--gray-500);">
+                        <p><strong>Experience:</strong> {{ job.experience_level }}</p>
+                        <p><strong>Type:</strong> {{ job.job_type }}</p>
+                        <p><strong>Category:</strong> {{ job.category }}</p>
+                        {% if job.salary_range %}
+                        <p><strong>Salary:</strong> {{ job.salary_range }}</p>
+                        {% endif %}
+                        <p><strong>Posted:</strong> {{ job.created_at[:10] }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

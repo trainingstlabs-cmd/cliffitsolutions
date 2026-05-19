@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Industries{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{{ url_for('home') }}">Home</a><span>/</span>
+            <span style="color:rgba(255,255,255,0.7)">Industries</span>
+        </div>
+        <h1>{{ pc.header.title if pc.header else 'Industries We Serve' }}</h1>
+        <p>{{ pc.header.subtitle if pc.header else 'Deep domain expertise across the sectors that power the modern economy.' }}</p>
+    </div>
+</section>
+
+<section class="industries-section">
+    <div class="container">
+        <div class="industries-grid">
+            <div class="industry-card fade-up">
+                <div class="industry-icon">&#127974;</div>
+                <h3>Financial Services</h3>
+                <p>Banking, Insurance, FinTech, Capital Markets. Compliance-aware talent for regulated environments.</p>
+            </div>
+            <div class="industry-card fade-up">
+                <div class="industry-icon">&#127973;</div>
+                <h3>Healthcare</h3>
+                <p>Providers, Payers, Life Sciences, Pharma. HIPAA-compliant solutions and EMR expertise.</p>
+            </div>
+            <div class="industry-card fade-up">
+                <div class="industry-icon">&#127981;</div>
+                <h3>Government</h3>
+                <p>Federal, State, Local agencies. Cleared professionals and FedRAMP-ready solutions.</p>
+            </div>
+            <div class="industry-card fade-up">
+                <div class="industry-icon">&#128722;</div>
+                <h3>Retail & E-Commerce</h3>
+                <p>Omnichannel platforms, supply chain optimization, and customer experience transformation.</p>
+            </div>
+            <div class="industry-card fade-up">
+                <div class="industry-icon">&#9889;</div>
+                <h3>Energy & Utilities</h3>
+                <p>Grid modernization, IoT, SCADA systems, and smart infrastructure engineering.</p>
+            </div>
+            <div class="industry-card fade-up">
+                <div class="industry-icon">&#128640;</div>
+                <h3>Technology</h3>
+                <p>SaaS platforms, dev tools, AI startups. Scaling engineering teams fast.</p>
+            </div>
+            <div class="industry-card fade-up">
+                <div class="industry-icon">&#127891;</div>
+                <h3>Education</h3>
+                <p>EdTech, Higher Education, LMS platforms. Digital learning transformation.</p>
+            </div>
+            <div class="industry-card fade-up">
+                <div class="industry-icon">&#9992;&#65039;</div>
+                <h3>Travel & Logistics</h3>
+                <p>Transportation, warehousing, fleet management, and route optimization systems.</p>
+            </div>
+            <div class="industry-card fade-up">
+                <div class="industry-icon">&#127983;</div>
+                <h3>Manufacturing</h3>
+                <p>Industry 4.0, ERP systems, supply chain digitization, and predictive maintenance.</p>
+            </div>
+            <div class="industry-card fade-up">
+                <div class="industry-icon">&#128225;</div>
+                <h3>Telecommunications</h3>
+                <p>5G infrastructure, network optimization, BSS/OSS transformation.</p>
+            </div>
+            <div class="industry-card fade-up">
+                <div class="industry-icon">&#127968;</div>
+                <h3>Real Estate</h3>
+                <p>PropTech, property management platforms, and smart building solutions.</p>
+            </div>
+            <div class="industry-card fade-up">
+                <div class="industry-icon">&#128218;</div>
+                <h3>Media & Entertainment</h3>
+                <p>Streaming platforms, content management, and digital media engineering.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-box fade-up">
+            <h2>Don't See Your Industry?</h2>
+            <p>We serve 50+ industries. Let's discuss how we can help your specific sector.</p>
+            <a href="{{ url_for('contact') }}" class="btn-white">Talk to Us</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

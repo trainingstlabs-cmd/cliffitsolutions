@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Services | cliffIT Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include "admin/_sidebar.html" %}
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h2>Manage Services</h2>
+            <a href="{{ url_for('admin_dashboard') }}" style="font-size:0.9rem; color:var(--gray-500);">&larr; Back to Dashboard</a>
+        </div>
+        <div class="admin-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}{% for cat, msg in messages %}<div class="flash-msg {{ cat }}">{{ msg }}</div>{% endfor %}{% endif %}
+            {% endwith %}
+
+            <div class="admin-card">
+                <h3>Service Listings</h3>
+                <p style="color:var(--gray-500); font-size:0.9rem; margin-bottom:16px;">Edit the title, description, features, and visibility of each service shown on your website.</p>
+                <div style="overflow-x:auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Tagline</th>
+                                <th>Color</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for slug in service_order %}
+                            {% set svc = services[slug] %}
+                            <tr>
+                                <td><strong>{{ svc.title }}</strong></td>
+                                <td style="color:var(--gray-500); font-size:0.85rem;">{{ svc.tagline }}</td>
+                                <td>
+                                    <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:
+                                        {% if svc.color == 'blue' %}var(--primary){% elif svc.color == 'green' %}var(--accent){% elif svc.color == 'purple' %}#8b5cf6{% elif svc.color == 'orange' %}#f97316{% elif svc.color == 'red' %}#ef4444{% elif svc.color == 'teal' %}#14b8a6{% else %}var(--gray-500){% endif %};
+                                        vertical-align:middle; margin-right:6px;"></span>
+                                    {{ svc.color }}
+                                </td>
+                                <td>
+                                    <span class="status-badge {{ 'active' if svc.is_active else 'inactive' }}">
+                                        {{ 'Active' if svc.is_active else 'Hidden' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="admin-actions">
+                                        <a href="{{ url_for('admin_edit_service', slug=slug) }}">Edit</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="hero" id="hero">
+    <div class="hero-glow"></div>
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                {{ site.hero_badge }}
+            </div>
+            <h1>{{ site.hero_heading|safe }}</h1>
+            <p>{{ site.hero_subtext }}</p>
+            <div class="hero-btns">
+                <a href="{{ url_for('services') }}" class="btn-primary">
+                    Explore Solutions
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5-5-5-5"/></svg>
+                </a>
+                <a href="{{ url_for('careers') }}" class="btn-outline">
+                    Find Talent
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5-5-5-5"/></svg>
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat"><h3>{{ site.active_consultants }}</h3><p>Active Consultants</p></div>
+                <div class="hero-stat"><h3>{{ site.client_satisfaction }}</h3><p>Client Satisfaction</p></div>
+                <div class="hero-stat"><h3>{{ site.industries_served }}</h3><p>Industries Served</p></div>
+                <div class="hero-stat"><h3>{{ site.years_in_business }}</h3><p>Track Record</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services-home" style="padding:100px 0;">
+    <div class="container">
+        <div class="fade-up">
+            <span class="section-label">{{ pc.services_section.label if pc.services_section else 'What We Do' }}</span>
+            <h2 class="section-title">{{ pc.services_section.title if pc.services_section else 'End-to-End Technology Services' }}</h2>
+            <p class="section-subtitle">{{ pc.services_section.subtitle if pc.services_section else '' }}</p>
+        </div>
+        <div class="services-grid">
+            {% set icons = {
+                'it-staffing': '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+                'digital-transformation': '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+                'application-development': '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
+                'cloud-infrastructure': '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+                'cybersecurity': '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+                'ai-data-analytics': '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+            } %}
+            {% for slug in service_order %}
+            {% set svc = services[slug] %}
+            <div class="service-card fade-up">
+                <div class="service-icon {{ svc.color }}">{{ icons[slug]|safe }}</div>
+                <h3>{{ svc.title }}</h3>
+                <p>{{ svc.description }}</p>
+                <a href="{{ url_for('service_detail', slug=slug) }}" class="learn-more">
+                    Learn more
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5-5-5-5"/></svg>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT PREVIEW -->
+<section class="about-section" style="background:var(--gray-100); padding:100px 0;">
+    <div class="container">
+        <div class="about-grid">
+            <div class="about-visual fade-up">
+                <div class="about-visual-stat"><h4>{{ pc.about_preview.stat1_value if pc.about_preview else '15+ Years' }}</h4><p>{{ pc.about_preview.stat1_label if pc.about_preview else 'Delivering technology excellence' }}</p></div>
+                <div class="about-visual-stat"><h4>{{ pc.about_preview.stat2_value if pc.about_preview else 'Fortune 500' }}</h4><p>{{ pc.about_preview.stat2_label if pc.about_preview else 'Trusted by leading enterprises' }}</p></div>
+                <div class="about-visual-stat"><h4>{{ pc.about_preview.stat3_value if pc.about_preview else '24/7 Support' }}</h4><p>{{ pc.about_preview.stat3_label if pc.about_preview else 'Round-the-clock managed services' }}</p></div>
+            </div>
+            <div class="about-content fade-up">
+                <span class="section-label">{{ pc.about_preview.label if pc.about_preview else 'Why cliffIT' }}</span>
+                <h2>{{ (pc.about_preview.heading if pc.about_preview else 'We Don\'t Just Fill Roles. We <span>Build Teams.</span>')|safe }}</h2>
+                <p>{{ pc.about_preview.text if pc.about_preview else '' }}</p>
+                <div style="margin-top:24px;">
+                    <a href="{{ url_for('about') }}" class="btn-primary btn-blue btn-sm">Learn More About Us</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURED JOBS -->
+{% if featured_jobs %}
+<section style="padding:80px 0;">
+    <div class="container">
+        <div class="fade-up" style="text-align:center; margin-bottom:48px;">
+            <span class="section-label">{{ pc.careers_section.label if pc.careers_section else 'Careers' }}</span>
+            <h2 class="section-title">{{ pc.careers_section.title if pc.careers_section else 'Latest Opportunities' }}</h2>
+            <p class="section-subtitle" style="margin-inline:auto;">{{ pc.careers_section.subtitle if pc.careers_section else '' }}</p>
+        </div>
+        <div class="jobs-list">
+            {% for job in featured_jobs %}
+            <a href="{{ url_for('job_detail', job_id=job.id) }}" class="job-card fade-up">
+                <div>
+                    <h3>{{ job.title }}</h3>
+                    <div class="job-meta">
+                        <span>&#128205; {{ job.location }}</span>
+                        <span>&#128188; {{ job.job_type }}</span>
+                        <span>&#128196; {{ job.category }}</span>
+                    </div>
+                </div>
+                <span class="job-tag">{{ job.experience_level }}</span>
+            </a>
+            {% endfor %}
+        </div>
+        <div style="text-align:center; margin-top:32px;">
+            <a href="{{ url_for('careers') }}" class="btn-primary btn-blue btn-sm">View All Openings</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+    <div class="container">
+        <div class="fade-up" style="text-align:center; margin-bottom:56px;">
+            <span class="section-label">{{ pc.testimonials.label if pc.testimonials else 'Client Stories' }}</span>
+            <h2 class="section-title">{{ pc.testimonials.title if pc.testimonials else 'Trusted by Industry Leaders' }}</h2>
+        </div>
+        <div class="testimonials-grid">
+            {% set t = pc.testimonials if pc.testimonials else {} %}
+            <div class="testimonial-card fade-up">
+                <div class="quote">"</div>
+                <p>{{ t.t1_quote if t.t1_quote else '' }}</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">{{ (t.t1_name|default('SR','true'))[:1] }}{{ (t.t1_name|default('SR','true')).split(' ')[-1][:1] if ' ' in (t.t1_name|default('SR','true')) else '' }}</div>
+                    <div><h4>{{ t.t1_name if t.t1_name else 'Sarah Reynolds' }}</h4><span>{{ t.t1_role if t.t1_role else '' }}</span></div>
+                </div>
+            </div>
+            <div class="testimonial-card fade-up">
+                <div class="quote">"</div>
+                <p>{{ t.t2_quote if t.t2_quote else '' }}</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">{{ (t.t2_name|default('MK','true'))[:1] }}{{ (t.t2_name|default('MK','true')).split(' ')[-1][:1] if ' ' in (t.t2_name|default('MK','true')) else '' }}</div>
+                    <div><h4>{{ t.t2_name if t.t2_name else 'Michael Keane' }}</h4><span>{{ t.t2_role if t.t2_role else '' }}</span></div>
+                </div>
+            </div>
+            <div class="testimonial-card fade-up">
+                <div class="quote">"</div>
+                <p>{{ t.t3_quote if t.t3_quote else '' }}</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">{{ (t.t3_name|default('AL','true'))[:1] }}{{ (t.t3_name|default('AL','true')).split(' ')[-1][:1] if ' ' in (t.t3_name|default('AL','true')) else '' }}</div>
+                    <div><h4>{{ t.t3_name if t.t3_name else 'Anita Liu' }}</h4><span>{{ t.t3_role if t.t3_role else '' }}</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-box fade-up">
+            <h2>{{ pc.cta.heading if pc.cta else 'Ready to Transform Your Technology?' }}</h2>
+            <p>{{ pc.cta.text if pc.cta else '' }}</p>
+            <a href="{{ url_for('contact') }}" class="btn-white">{{ pc.cta.button_text if pc.cta else 'Get Started Today' }}</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Counter animation for hero stats
+function animateCounters() {
+    document.querySelectorAll('.hero-stat h3').forEach(el => {
+        const text = el.textContent;
+        const num = parseInt(text.replace(/[^0-9]/g, ''));
+        const suffix = text.replace(/[0-9,]/g, '');
+        let current = 0;
+        const step = Math.ceil(num / 40);
+        const interval = setInterval(() => {
+            current += step;
+            if (current >= num) { current = num; clearInterval(interval); }
+            el.textContent = current.toLocaleString() + suffix;
+        }, 30);
+    });
+}
+const heroObs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) { animateCounters(); heroObs.disconnect(); }
+});
+heroObs.observe(document.querySelector('.hero'));
+</script>
+{% endblock %}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Settings | cliffIT Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include "admin/_sidebar.html" %}
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h2>Site Settings</h2>
+            <a href="{{ url_for('admin_dashboard') }}" style="font-size:0.9rem; color:var(--gray-500);">&larr; Back to Dashboard</a>
+        </div>
+        <div class="admin-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}{% for cat, msg in messages %}<div class="flash-msg {{ cat }}">{{ msg }}</div>{% endfor %}{% endif %}
+            {% endwith %}
+
+            <form method="post" action="{{ url_for('admin_settings') }}" class="admin-form">
+                <!-- Contact Info -->
+                <div class="admin-card">
+                    <h3>Contact Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" value="{{ settings.email }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="text" id="phone" name="phone" value="{{ settings.phone }}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="address">Address / Location</label>
+                            <input type="text" id="address" name="address" value="{{ settings.address }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="business_hours">Business Hours</label>
+                            <input type="text" id="business_hours" name="business_hours" value="{{ settings.business_hours }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Links -->
+                <div class="admin-card">
+                    <h3>Social Media Links</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="linkedin_url">LinkedIn URL</label>
+                            <input type="text" id="linkedin_url" name="linkedin_url" value="{{ settings.linkedin_url }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="twitter_url">Twitter / X URL</label>
+                            <input type="text" id="twitter_url" name="twitter_url" value="{{ settings.twitter_url }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="facebook_url">Facebook URL</label>
+                        <input type="text" id="facebook_url" name="facebook_url" value="{{ settings.facebook_url }}">
+                    </div>
+                </div>
+
+                <!-- Company Stats -->
+                <div class="admin-card">
+                    <h3>Company Statistics (shown on homepage)</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="active_consultants">Active Consultants</label>
+                            <input type="text" id="active_consultants" name="active_consultants" value="{{ settings.active_consultants }}" placeholder="e.g., 1,200+">
+                        </div>
+                        <div class="form-group">
+                            <label for="client_satisfaction">Client Satisfaction</label>
+                            <input type="text" id="client_satisfaction" name="client_satisfaction" value="{{ settings.client_satisfaction }}" placeholder="e.g., 98%">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="industries_served">Industries Served</label>
+                            <input type="text" id="industries_served" name="industries_served" value="{{ settings.industries_served }}" placeholder="e.g., 50+">
+                        </div>
+                        <div class="form-group">
+                            <label for="years_in_business">Years in Business</label>
+                            <input type="text" id="years_in_business" name="years_in_business" value="{{ settings.years_in_business }}" placeholder="e.g., 15yr">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Section -->
+                <div class="admin-card">
+                    <h3>Homepage Hero Section</h3>
+                    <div class="form-group">
+                        <label for="hero_badge">Badge Text (top of hero)</label>
+                        <input type="text" id="hero_badge" name="hero_badge" value="{{ settings.hero_badge }}" placeholder="e.g., Now Hiring — 500+ Open Positions">
+                    </div>
+                    <div class="form-group">
+                        <label for="hero_heading">Main Heading (HTML allowed for &lt;span&gt; accent)</label>
+                        <input type="text" id="hero_heading" name="hero_heading" value="{{ settings.hero_heading }}">
+                        <div class="form-hint">Wrap text in &lt;span&gt;...&lt;/span&gt; to highlight in accent color.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="hero_subtext">Sub-heading Text</label>
+                        <textarea id="hero_subtext" name="hero_subtext" style="min-height:80px;">{{ settings.hero_subtext }}</textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary btn-blue" style="margin-top:8px;">Save All Settings</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit {{ page_title }} | cliffIT Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include "admin/_sidebar.html" %}
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h2>Edit: {{ page_title }}</h2>
+            <div>
+                <a href="/admin/pages" style="font-size:0.9rem; color:var(--gray-500); margin-right:16px;">&larr; All Pages</a>
+                <a href="{{ url_for(page if page != 'home' else 'home') }}" target="_blank" style="font-size:0.9rem; color:var(--primary);">View Live Page &#8599;</a>
+            </div>
+        </div>
+        <div class="admin-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}{% for cat, msg in messages %}<div class="flash-msg {{ cat }}">{{ msg }}</div>{% endfor %}{% endif %}
+            {% endwith %}
+
+            <form method="post" action="/admin/pages/{{ page }}" class="admin-form">
+                {% for section_key, fields in content.items() %}
+                <div class="admin-card">
+                    <h3 style="text-transform:capitalize; margin-bottom:16px;">{{ section_key.replace('_', ' ') }}</h3>
+                    {% for field_key, field_value in fields.items() %}
+                    <div class="form-group">
+                        <label for="{{ section_key }}__{{ field_key }}">
+                            {{ field_key.replace('_', ' ').title() }}
+                        </label>
+                        {% if field_value|length > 100 or 'paragraph' in field_key or 'text' in field_key or 'quote' in field_key or 'subtitle' in field_key %}
+                        <textarea id="{{ section_key }}__{{ field_key }}"
+                                  name="{{ section_key }}__{{ field_key }}"
+                                  style="min-height:80px;">{{ field_value }}</textarea>
+                        {% else %}
+                        <input type="text"
+                               id="{{ section_key }}__{{ field_key }}"
+                               name="{{ section_key }}__{{ field_key }}"
+                               value="{{ field_value }}">
+                        {% endif %}
+                        {% if 'heading' in field_key %}
+                        <div class="form-hint">HTML allowed: use &lt;span&gt;text&lt;/span&gt; for accent color highlights.</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+
+                <button type="submit" class="btn-primary btn-blue" style="margin-top:8px;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

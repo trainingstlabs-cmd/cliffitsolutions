@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{{ url_for('home') }}">Home</a><span>/</span>
+            <span style="color:rgba(255,255,255,0.7)">Contact</span>
+        </div>
+        <h1>{{ pc.header.title if pc.header else 'Get in Touch' }}</h1>
+        <p>{{ pc.header.subtitle if pc.header else "Ready to discuss your next project? Our team is here to help." }}</p>
+    </div>
+</section>
+
+<section class="contact-section">
+    <div class="container">
+        <div class="contact-grid">
+            <div class="contact-info fade-up">
+                <h2>Let's Start a Conversation</h2>
+                <p>Whether you need talent, technology solutions, or strategic guidance, our team is here to help. Reach out and we'll respond within 24 hours.</p>
+
+                <div class="contact-item">
+                    <div class="contact-item-icon">&#128231;</div>
+                    <div>
+                        <h4>Email</h4>
+                        <p>{{ site.email }}</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-item-icon">&#128222;</div>
+                    <div>
+                        <h4>Phone</h4>
+                        <p>{{ site.phone }}</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-item-icon">&#128205;</div>
+                    <div>
+                        <h4>Headquarters</h4>
+                        <p>{{ site.address }}</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-item-icon">&#9200;</div>
+                    <div>
+                        <h4>Business Hours</h4>
+                        <p>{{ site.business_hours }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form fade-up">
+                <form method="post" action="{{ url_for('contact') }}">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Full Name *</label>
+                            <input type="text" id="name" name="name" required placeholder="John Smith">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required placeholder="john@company.com">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="company">Company</label>
+                            <input type="text" id="company" name="company" placeholder="Your company name">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="service">Service of Interest</label>
+                        <select id="service" name="service">
+                            <option value="">Select a service...</option>
+                            {% for slug in service_order %}
+                            <option value="{{ slug }}" {% if selected_service == slug %}selected{% endif %}>
+                                {{ services[slug].title }}
+                            </option>
+                            {% endfor %}
+                            <option value="careers" {% if selected_service == 'careers' %}selected{% endif %}>
+                                Career Opportunities
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" required placeholder="Tell us about your project or needs..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary btn-blue" style="width:100%; justify-content:center;">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

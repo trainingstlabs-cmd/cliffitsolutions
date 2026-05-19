@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}cliffIT Solutions{% endblock %} | Technology & Talent Solutions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="{{ url_for('home') }}" class="logo">
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="cliffIT Solutions" style="height:36px;">
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="{{ url_for('services') }}" class="{% if request.endpoint in ('services','service_detail') %}active{% endif %}">Services</a>
+                <a href="{{ url_for('about') }}" class="{% if request.endpoint == 'about' %}active{% endif %}">About</a>
+                <a href="{{ url_for('industries') }}" class="{% if request.endpoint == 'industries' %}active{% endif %}">Industries</a>
+                <a href="{{ url_for('careers') }}" class="{% if request.endpoint in ('careers','job_detail') %}active{% endif %}">Careers</a>
+                <a href="{{ url_for('contact') }}" class="nav-cta">Contact Us</a>
+            </div>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div style="position:fixed;top:80px;right:24px;z-index:9999;max-width:400px;">
+        {% for cat, msg in messages %}
+        <div class="flash-msg {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo" style="margin-bottom:16px;">
+                        <img src="{{ url_for('static', filename='img/logo-white.svg') }}" alt="cliffIT Solutions" style="height:32px;">
+                    </div>
+                    <p>Full-stack technology and talent solutions provider. We help organizations build, scale, and transform through expert staffing, consulting, and managed services.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <a href="{{ url_for('service_detail', slug='it-staffing') }}">IT Staffing</a>
+                    <a href="{{ url_for('service_detail', slug='digital-transformation') }}">Digital Transformation</a>
+                    <a href="{{ url_for('service_detail', slug='application-development') }}">App Development</a>
+                    <a href="{{ url_for('service_detail', slug='cloud-infrastructure') }}">Cloud Solutions</a>
+                    <a href="{{ url_for('service_detail', slug='cybersecurity') }}">Cybersecurity</a>
+                    <a href="{{ url_for('service_detail', slug='ai-data-analytics') }}">AI & Analytics</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="{{ url_for('about') }}">About Us</a>
+                    <a href="{{ url_for('industries') }}">Industries</a>
+                    <a href="{{ url_for('careers') }}">Careers</a>
+                    <a href="{{ url_for('contact') }}">Contact</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+                    <a href="tel:{{ site.phone }}">{{ site.phone }}</a>
+                    <a>{{ site.address }}</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 {{ site.company_name }}. All rights reserved.</span>
+                <div class="footer-social">
+                    <a href="{{ site.linkedin_url }}" title="LinkedIn">in</a>
+                    <a href="{{ site.twitter_url }}" title="Twitter">X</a>
+                    <a href="{{ site.facebook_url }}" title="Facebook">f</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

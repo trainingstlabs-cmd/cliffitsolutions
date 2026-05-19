@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'Edit Job' if job else 'Post New Job' }} | cliffIT Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include "admin/_sidebar.html" %}
+
+    <!-- Main -->
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h2>{{ 'Edit Job' if job else 'Post New Job' }}</h2>
+            <a href="{{ url_for('admin_dashboard') }}" style="font-size:0.9rem; color:var(--gray-500);">&larr; Back to Dashboard</a>
+        </div>
+
+        <div class="admin-content">
+            <div class="admin-card">
+                <form method="post" class="admin-form">
+                    <div class="form-group">
+                        <label for="title">Job Title *</label>
+                        <input type="text" id="title" name="title" required
+                               value="{{ job.title if job else '' }}"
+                               placeholder="e.g., Senior Full-Stack Developer">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="location">Location *</label>
+                            <input type="text" id="location" name="location" required
+                                   value="{{ job.location if job else '' }}"
+                                   placeholder="e.g., Austin, TX or Remote">
+                        </div>
+                        <div class="form-group">
+                            <label for="job_type">Job Type *</label>
+                            <select id="job_type" name="job_type">
+                                {% set types = ['Full-Time', 'Contract', 'Contract-to-Hire', 'Part-Time'] %}
+                                {% for t in types %}
+                                <option value="{{ t }}" {% if job and job.job_type == t %}selected{% endif %}>{{ t }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category">Category *</label>
+                            <select id="category" name="category">
+                                {% for cat in categories %}
+                                <option value="{{ cat }}" {% if job and job.category == cat %}selected{% endif %}>{{ cat }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="experience_level">Experience Level</label>
+                            <select id="experience_level" name="experience_level">
+                                {% set levels = ['Entry-Level', 'Mid-Level', 'Senior', 'Lead', 'Principal', 'Director'] %}
+                                {% for lvl in levels %}
+                                <option value="{{ lvl }}" {% if job and job.experience_level == lvl %}selected{% endif %}>{{ lvl }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="salary_range">Salary Range</label>
+                        <input type="text" id="salary_range" name="salary_range"
+                               value="{{ job.salary_range if job else '' }}"
+                               placeholder="e.g., $120,000 - $160,000 / year">
+                        <div class="form-hint">Optional. Leave blank to hide salary info.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Job Description *</label>
+                        <textarea id="description" name="description" required
+                                  placeholder="Describe the role, responsibilities, and what makes this opportunity exciting..."
+                                  style="min-height:200px;">{{ job.description if job else '' }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="requirements">Requirements</label>
+                        <textarea id="requirements" name="requirements"
+                                  placeholder="One requirement per line. E.g.:&#10;5+ years of experience with React&#10;Strong understanding of REST APIs&#10;BS in Computer Science or equivalent"
+                                  style="min-height:150px;">{{ job.requirements if job else '' }}</textarea>
+                        <div class="form-hint">One requirement per line. Will display as a bulleted list.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="benefits">Benefits</label>
+                        <textarea id="benefits" name="benefits"
+                                  placeholder="One benefit per line. E.g.:&#10;Competitive salary and equity&#10;Health, dental, and vision insurance&#10;Flexible remote work policy"
+                                  style="min-height:120px;">{{ job.benefits if job else '' }}</textarea>
+                        <div class="form-hint">One benefit per line. Will display as a bulleted list.</div>
+                    </div>
+
+                    {% if job %}
+                    <div class="form-group">
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                            <input type="checkbox" name="is_active" value="1"
+                                   {% if job.is_active %}checked{% endif %}
+                                   style="width:auto;">
+                            Active (visible on careers page)
+                        </label>
+                    </div>
+                    {% endif %}
+
+                    <div style="display:flex; gap:12px; margin-top:24px;">
+                        <button type="submit" class="btn-primary btn-blue">
+                            {{ 'Update Job' if job else 'Publish Job' }}
+                        </button>
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn-primary btn-sm"
+                           style="background:var(--gray-300); color:var(--gray-700);">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

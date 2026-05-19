@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Services{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{{ url_for('home') }}">Home</a>
+            <span>/</span>
+            <span style="color:rgba(255,255,255,0.7)">Services</span>
+        </div>
+        <h1>{{ pc.header.title if pc.header else 'Our Services' }}</h1>
+        <p>{{ pc.header.subtitle if pc.header else 'End-to-end technology and talent solutions — from strategy and staffing to execution and managed services.' }}</p>
+    </div>
+</section>
+
+<section style="padding:80px 0;">
+    <div class="container">
+        {% set icons = {
+            'it-staffing': '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+            'digital-transformation': '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+            'application-development': '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
+            'cloud-infrastructure': '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+            'cybersecurity': '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+            'ai-data-analytics': '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+        } %}
+        <div class="services-grid">
+            {% for slug in service_order %}
+            {% set svc = services[slug] %}
+            <div class="service-card fade-up">
+                <div class="service-icon {{ svc.color }}">{{ icons[slug]|safe }}</div>
+                <h3>{{ svc.title }}</h3>
+                <p>{{ svc.description }}</p>
+                <a href="{{ url_for('service_detail', slug=slug) }}" class="learn-more">
+                    Learn more
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5-5-5-5"/></svg>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-box fade-up">
+            <h2>{{ pc.cta.heading if pc.cta else 'Need a Custom Solution?' }}</h2>
+            <p>{{ pc.cta.text if pc.cta else "Let's discuss how our services can address your specific technology challenges." }}</p>
+            <a href="{{ url_for('contact') }}" class="btn-white">{{ pc.cta.button_text if pc.cta else 'Talk to an Expert' }}</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

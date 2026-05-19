@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Careers{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{{ url_for('home') }}">Home</a><span>/</span>
+            <span style="color:rgba(255,255,255,0.7)">Careers</span>
+        </div>
+        <h1>{{ pc.header.title if pc.header else 'Career Opportunities' }}</h1>
+        <p>{{ pc.header.subtitle if pc.header else 'Join our team of technology professionals and work with industry-leading clients across the country.' }}</p>
+    </div>
+</section>
+
+<section class="careers-section">
+    <div class="container">
+        <div class="jobs-filter fade-up">
+            <form method="get" action="{{ url_for('careers') }}" style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
+                <select name="category" onchange="this.form.submit()">
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {% if cat == sel_category %}selected{% endif %}>
+                        {% if cat == 'All' %}All Categories{% else %}{{ cat }}{% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+                <select name="location" onchange="this.form.submit()">
+                    {% for loc in locations %}
+                    <option value="{{ loc }}" {% if loc == sel_location %}selected{% endif %}>
+                        {% if loc == 'All' %}All Locations{% else %}{{ loc }}{% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+                <span style="color:var(--gray-500); font-size:0.9rem;">{{ jobs|length }} position{{ 's' if jobs|length != 1 else '' }} found</span>
+            </form>
+        </div>
+
+        {% if jobs %}
+        <div class="jobs-list">
+            {% for job in jobs %}
+            <a href="{{ url_for('job_detail', job_id=job.id) }}" class="job-card fade-up">
+                <div>
+                    <h3>{{ job.title }}</h3>
+                    <div class="job-meta">
+                        <span>&#128205; {{ job.location }}</span>
+                        <span>&#128188; {{ job.job_type }}</span>
+                        <span>&#128196; {{ job.category }}</span>
+                        {% if job.salary_range %}
+                        <span>&#128176; {{ job.salary_range }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <span class="job-tag">{{ job.experience_level }}</span>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-jobs fade-up">
+            <h3>No positions found</h3>
+            <p>Try adjusting your filters or check back soon for new openings.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-box fade-up">
+            <h2>Don't See the Right Role?</h2>
+            <p>Send us your resume and we'll match you with upcoming opportunities.</p>
+            <a href="{{ url_for('contact') }}" class="btn-white">Get in Touch</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
