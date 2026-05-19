@@ -37,3 +37,4 @@ Your site will be live at `https://cliffit-solutions.onrender.com` within a few 
 - Free tier apps sleep after 15 minutes of inactivity (first visit after sleep takes ~30 seconds)
 - Admin edits are stored in SQLite. On Render, `render.yaml` mounts a persistent disk at `/var/data` and sets `DATABASE_PATH=/var/data/cliffIT.db` so website updates survive restarts and deploys.
 - Persistent disks require a paid Render web service. If you stay on the free tier, use Render Postgres or another external database for saved admin updates.
+- Contact form email notifications use SMTP when these Render environment variables are set: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, and optionally `SMTP_FROM_EMAIL` and `SMTP_USE_TLS`. Notifications are sent to the Site Settings contact form email, defaulting to `hr@cliffitsolutions.com`.

@@ -42,17 +42,17 @@
         {% set v = pc.values if pc.values else {} %}
         <div class="services-grid">
             <div class="service-card fade-up">
-                <div class="service-icon blue" style="font-size:1.8rem;">{{ v.v1_icon if v.v1_icon else '&#129309;' }}</div>
+                <div class="service-icon blue" style="font-size:1.8rem;">{{ (v.v1_icon if v.v1_icon else '&#129309;')|safe }}</div>
                 <h3>{{ v.v1_title if v.v1_title else 'Relationships First' }}</h3>
                 <p>{{ v.v1_text if v.v1_text else '' }}</p>
             </div>
             <div class="service-card fade-up">
-                <div class="service-icon green" style="font-size:1.8rem;">{{ v.v2_icon if v.v2_icon else '&#127942;' }}</div>
+                <div class="service-icon green" style="font-size:1.8rem;">{{ (v.v2_icon if v.v2_icon else '&#127942;')|safe }}</div>
                 <h3>{{ v.v2_title if v.v2_title else 'Excellence Always' }}</h3>
                 <p>{{ v.v2_text if v.v2_text else '' }}</p>
             </div>
             <div class="service-card fade-up">
-                <div class="service-icon purple" style="font-size:1.8rem;">{{ v.v3_icon if v.v3_icon else '&#128161;' }}</div>
+                <div class="service-icon purple" style="font-size:1.8rem;">{{ (v.v3_icon if v.v3_icon else '&#128161;')|safe }}</div>
                 <h3>{{ v.v3_title if v.v3_title else 'Innovation Forward' }}</h3>
                 <p>{{ v.v3_text if v.v3_text else '' }}</p>
             </div>

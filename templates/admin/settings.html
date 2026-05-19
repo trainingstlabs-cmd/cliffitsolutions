@@ -31,14 +31,24 @@
                             <input type="email" id="email" name="email" value="{{ settings.email }}">
                         </div>
                         <div class="form-group">
-                            <label for="phone">Phone Number</label>
-                            <input type="text" id="phone" name="phone" value="{{ settings.phone }}">
+                            <label for="notification_email">Contact Form Email</label>
+                            <input type="email" id="notification_email" name="notification_email" value="{{ settings.notification_email }}">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="text" id="phone" name="phone" value="{{ settings.phone }}">
+                        </div>
+                        <div class="form-group">
                             <label for="address">Address / Location</label>
                             <input type="text" id="address" name="address" value="{{ settings.address }}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="additional_address">Additional Address</label>
+                            <textarea id="additional_address" name="additional_address" style="min-height:80px;">{{ settings.additional_address }}</textarea>
                         </div>
                         <div class="form-group">
                             <label for="business_hours">Business Hours</label>

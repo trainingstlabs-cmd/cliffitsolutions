@@ -21,10 +21,10 @@
                 <p>Whether you need talent, technology solutions, or strategic guidance, our team is here to help. Reach out and we'll respond within 24 hours.</p>
 
                 <div class="contact-item">
-                    <div class="contact-item-icon">&#128231;</div>
+                    <a class="contact-item-icon" href="mailto:{{ site.notification_email or site.email }}?subject=Website%20Inquiry">&#128231;</a>
                     <div>
                         <h4>Email</h4>
-                        <p>{{ site.email }}</p>
+                        <p><a href="mailto:{{ site.notification_email or site.email }}?subject=Website%20Inquiry">{{ site.notification_email or site.email }}</a></p>
                     </div>
                 </div>
                 <div class="contact-item">
@@ -39,6 +39,9 @@
                     <div>
                         <h4>Headquarters</h4>
                         <p>{{ site.address }}</p>
+                        {% if site.additional_address %}
+                        <p style="margin-top:8px;">{{ site.additional_address|e|replace('\n', '<br>')|safe }}</p>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="contact-item">

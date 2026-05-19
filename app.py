@@ -7,9 +7,11 @@ import os
 import json
 import uuid
 import re
+import smtplib
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs, unquote
 from http.cookies import SimpleCookie
+from email.message import EmailMessage
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import database as db
 
@@ -54,6 +56,55 @@ def url_for(endpoint, **kwargs):
     if endpoint == "static":
         return f"/static/{kwargs.get('filename', '')}"
     return routes.get(endpoint, "/")
+
+
+def send_contact_email(data, site):
+    """Send a contact-form notification when SMTP is configured."""
+    smtp_host = os.environ.get("SMTP_HOST")
+    if not smtp_host:
+        print("Contact email skipped: SMTP_HOST is not configured.")
+        return False
+
+    smtp_port = int(os.environ.get("SMTP_PORT", "587"))
+    smtp_user = os.environ.get("SMTP_USERNAME", "")
+    smtp_password = os.environ.get("SMTP_PASSWORD", "")
+    smtp_from = os.environ.get("SMTP_FROM_EMAIL") or smtp_user or site.get("email")
+    use_tls = os.environ.get("SMTP_USE_TLS", "true").lower() not in ("0", "false", "no")
+    to_email = site.get("notification_email") or "hr@cliffitsolutions.com"
+
+    msg = EmailMessage()
+    msg["Subject"] = f"New website contact from {data.get('name', 'Website Visitor')}"
+    msg["From"] = smtp_from
+    msg["To"] = to_email
+    if data.get("email"):
+        msg["Reply-To"] = data["email"]
+
+    msg.set_content(
+        "\n".join([
+            "New contact form submission",
+            "",
+            f"Name: {data.get('name', '')}",
+            f"Email: {data.get('email', '')}",
+            f"Company: {data.get('company', '')}",
+            f"Phone: {data.get('phone', '')}",
+            f"Service: {data.get('service', '')}",
+            "",
+            "Message:",
+            data.get("message", ""),
+        ])
+    )
+
+    try:
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as smtp:
+            if use_tls:
+                smtp.starttls()
+            if smtp_user and smtp_password:
+                smtp.login(smtp_user, smtp_password)
+            smtp.send_message(msg)
+        return True
+    except Exception as exc:
+        print(f"Contact email failed: {exc}")
+        return False
 
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -325,12 +376,17 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def handle_contact_post(self):
         data = self.parse_form()
-        db.save_contact({
+        submission = {
             "name": data.get("name", ""), "email": data.get("email", ""),
             "company": data.get("company", ""), "phone": data.get("phone", ""),
             "service": data.get("service", ""), "message": data.get("message", "")
-        })
-        sid = self.flash("Thank you! We'll be in touch within 24 hours.", "success")
+        }
+        db.save_contact(submission)
+        sent = send_contact_email(submission, db.get_settings())
+        message = "Thank you! We'll be in touch within 24 hours."
+        if not sent:
+            message += " Your message has been saved for our team."
+        sid = self.flash(message, "success")
         self.send_redirect("/contact", sid=sid)
 
     # ─── Admin Handlers ───
