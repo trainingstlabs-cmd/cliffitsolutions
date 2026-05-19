@@ -9,3 +9,9 @@ services:
         value: 10000
       - key: PYTHON_VERSION
         value: 3.11.6
+      - key: DATABASE_PATH
+        value: /var/data/cliffIT.db
+    disk:
+      name: cliffit-data
+      mountPath: /var/data
+      sizeGB: 1

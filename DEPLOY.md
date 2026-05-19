@@ -35,4 +35,5 @@ Your site will be live at `https://cliffit-solutions.onrender.com` within a few 
 ## Notes
 
 - Free tier apps sleep after 15 minutes of inactivity (first visit after sleep takes ~30 seconds)
-- The SQLite database resets on each deploy — for persistent data, consider upgrading to Render's PostgreSQL
+- Admin edits are stored in SQLite. On Render, `render.yaml` mounts a persistent disk at `/var/data` and sets `DATABASE_PATH=/var/data/cliffIT.db` so website updates survive restarts and deploys.
+- Persistent disks require a paid Render web service. If you stay on the free tier, use Render Postgres or another external database for saved admin updates.
