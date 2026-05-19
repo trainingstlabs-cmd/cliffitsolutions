@@ -75,9 +75,9 @@
                     <h4>Contact</h4>
                     <a href="mailto:{{ site.notification_email or site.email }}">{{ site.notification_email or site.email }}</a>
                     <a href="tel:{{ site.phone }}">{{ site.phone }}</a>
-                    <a>{{ site.address }}</a>
+                    <a>Headquarters: {{ site.address }}</a>
                     {% if site.additional_address %}
-                    <a>{{ site.additional_address|replace('\n', ' · ') }}</a>
+                    <a>Additional Locations: {{ site.additional_address|replace('\n', ' · ') }}</a>
                     {% endif %}
                 </div>
             </div>

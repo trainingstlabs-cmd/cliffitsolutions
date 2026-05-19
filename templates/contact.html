@@ -39,11 +39,17 @@
                     <div>
                         <h4>Headquarters</h4>
                         <p>{{ site.address }}</p>
-                        {% if site.additional_address %}
-                        <p style="margin-top:8px;">{{ site.additional_address|e|replace('\n', '<br>')|safe }}</p>
-                        {% endif %}
                     </div>
                 </div>
+                {% if site.additional_address %}
+                <div class="contact-item">
+                    <div class="contact-item-icon">&#127970;</div>
+                    <div>
+                        <h4>Additional Locations</h4>
+                        <p>{{ site.additional_address|e|replace('\n', '<br>')|safe }}</p>
+                    </div>
+                </div>
+                {% endif %}
                 <div class="contact-item">
                     <div class="contact-item-icon">&#9200;</div>
                     <div>
