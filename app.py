@@ -49,6 +49,12 @@ def url_for(endpoint, **kwargs):
         return f"/admin/jobs/{kwargs.get('job_id', '')}/delete"
     if endpoint == "admin_toggle_job":
         return f"/admin/jobs/{kwargs.get('job_id', '')}/toggle"
+    if endpoint == "admin_view_contact":
+        return f"/admin/contacts/{kwargs.get('contact_id', '')}"
+    if endpoint == "admin_toggle_contact_read":
+        return f"/admin/contacts/{kwargs.get('contact_id', '')}/toggle-read"
+    if endpoint == "admin_delete_contact":
+        return f"/admin/contacts/{kwargs.get('contact_id', '')}/delete"
     if endpoint == "admin_edit_service":
         return f"/admin/services/{kwargs.get('slug', '')}/edit"
     if endpoint == "admin_edit_page":
@@ -257,6 +263,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.handle_admin_new_job_get()
             elif re.match(r"^/admin/jobs/(\d+)/edit$", path):
                 self.handle_admin_edit_job_get(int(re.match(r"^/admin/jobs/(\d+)/edit$", path).group(1)))
+            elif re.match(r"^/admin/contacts/(\d+)$", path):
+                self.handle_admin_view_contact(int(re.match(r"^/admin/contacts/(\d+)$", path).group(1)))
             elif path == "/admin/settings":
                 self.handle_admin_settings_get()
             elif path == "/admin/services":
@@ -290,6 +298,10 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.handle_admin_delete_job(int(re.match(r"^/admin/jobs/(\d+)/delete$", path).group(1)))
             elif re.match(r"^/admin/jobs/(\d+)/toggle$", path):
                 self.handle_admin_toggle_job(int(re.match(r"^/admin/jobs/(\d+)/toggle$", path).group(1)))
+            elif re.match(r"^/admin/contacts/(\d+)/toggle-read$", path):
+                self.handle_admin_toggle_contact_read(int(re.match(r"^/admin/contacts/(\d+)/toggle-read$", path).group(1)))
+            elif re.match(r"^/admin/contacts/(\d+)/delete$", path):
+                self.handle_admin_delete_contact(int(re.match(r"^/admin/contacts/(\d+)/delete$", path).group(1)))
             elif path == "/admin/settings":
                 self.handle_admin_settings_post()
             elif re.match(r"^/admin/services/([^/]+)/edit$", path):
@@ -433,7 +445,8 @@ class RequestHandler(BaseHTTPRequestHandler):
         stats = {
             "total_jobs": len(jobs),
             "active_jobs": sum(1 for j in jobs if j["is_active"]),
-            "total_contacts": len(contacts)
+            "total_contacts": len(contacts),
+            "unread_contacts": db.get_unread_contact_count(),
         }
         html, sid = self.render("admin/dashboard.html", jobs=jobs, contacts=contacts, stats=stats)
         self.send_html(html, sid=sid)
@@ -515,6 +528,40 @@ class RequestHandler(BaseHTTPRequestHandler):
             conn.commit()
             conn.close()
         self.send_redirect("/admin")
+
+    # ─── Admin Contacts ───
+
+    def handle_admin_view_contact(self, contact_id):
+        if not self._check_admin():
+            self.send_redirect("/admin/login")
+            return
+        contact = db.get_contact_by_id(contact_id)
+        if not contact:
+            sid = self.flash("Contact submission not found.", "error")
+            self.send_redirect("/admin", sid=sid)
+            return
+        if not contact["is_read"]:
+            db.mark_contact_read(contact_id, 1)
+            contact = db.get_contact_by_id(contact_id)
+        html, sid = self.render("admin/contact_detail.html", contact=contact)
+        self.send_html(html, sid=sid)
+
+    def handle_admin_toggle_contact_read(self, contact_id):
+        if not self._check_admin():
+            self.send_redirect("/admin/login")
+            return
+        contact = db.get_contact_by_id(contact_id)
+        if contact:
+            db.mark_contact_read(contact_id, 0 if contact["is_read"] else 1)
+        self.send_redirect("/admin")
+
+    def handle_admin_delete_contact(self, contact_id):
+        if not self._check_admin():
+            self.send_redirect("/admin/login")
+            return
+        db.delete_contact(contact_id)
+        sid = self.flash("Contact submission deleted.", "success")
+        self.send_redirect("/admin", sid=sid)
 
     # ─── Admin Settings ───
 

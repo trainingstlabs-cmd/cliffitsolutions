@@ -103,9 +103,15 @@ def init_db():
             phone TEXT,
             service TEXT,
             message TEXT NOT NULL,
+            is_read INTEGER DEFAULT 0,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
         )
     """)
+
+    try:
+        c.execute("SELECT is_read FROM contact_submissions LIMIT 1")
+    except Exception:
+        c.execute("ALTER TABLE contact_submissions ADD COLUMN is_read INTEGER DEFAULT 0")
 
     c.execute("""
         CREATE TABLE IF NOT EXISTS site_settings (
@@ -360,6 +366,30 @@ def get_contacts():
     contacts = conn.execute("SELECT * FROM contact_submissions ORDER BY created_at DESC").fetchall()
     conn.close()
     return contacts
+
+def get_contact_by_id(contact_id):
+    conn = get_db()
+    contact = conn.execute("SELECT * FROM contact_submissions WHERE id = ?", (contact_id,)).fetchone()
+    conn.close()
+    return contact
+
+def mark_contact_read(contact_id, is_read=1):
+    conn = get_db()
+    conn.execute("UPDATE contact_submissions SET is_read = ? WHERE id = ?", (1 if is_read else 0, contact_id))
+    conn.commit()
+    conn.close()
+
+def delete_contact(contact_id):
+    conn = get_db()
+    conn.execute("DELETE FROM contact_submissions WHERE id = ?", (contact_id,))
+    conn.commit()
+    conn.close()
+
+def get_unread_contact_count():
+    conn = get_db()
+    row = conn.execute("SELECT COUNT(*) AS count FROM contact_submissions WHERE is_read = 0").fetchone()
+    conn.close()
+    return row["count"] if row else 0
 
 def get_job_categories():
     return ["Engineering", "Cloud & DevOps", "Cybersecurity", "Data & AI",

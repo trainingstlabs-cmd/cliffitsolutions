@@ -45,6 +45,10 @@
                     <h3>{{ stats.total_contacts }}</h3>
                     <p>Contact Submissions</p>
                 </div>
+                <div class="admin-stat-card">
+                    <h3>{{ stats.unread_contacts }}</h3>
+                    <p>Unread Messages</p>
+                </div>
             </div>
 
             <!-- Jobs Table -->
@@ -83,16 +87,16 @@
                                 <td>{{ job.end_date if job.end_date else '—' }}</td>
                                 <td>
                                     <div class="admin-actions">
-                                        <a href="{{ url_for('admin_edit_job', job_id=job.id) }}">Edit</a>
+                                        <a href="{{ url_for('admin_edit_job', job_id=job.id) }}" class="action-btn action-primary">Edit</a>
                                         <form method="post" action="{{ url_for('admin_toggle_job', job_id=job.id) }}" style="display:inline;">
-                                            <button type="submit">
+                                            <button type="submit" class="action-btn action-neutral">
                                                 {{ 'Deactivate' if job.is_active else 'Activate' }}
                                             </button>
                                         </form>
                                         <form method="post" action="{{ url_for('admin_delete_job', job_id=job.id) }}"
                                               style="display:inline;"
                                               onsubmit="return confirm('Delete this job listing?')">
-                                            <button type="submit" class="btn-danger">Delete</button>
+                                            <button type="submit" class="action-btn action-danger">Delete</button>
                                         </form>
                                     </div>
                                 </td>
@@ -111,23 +115,38 @@
 
             <!-- Contact Submissions -->
             <div class="admin-card">
-                <h3>Recent Contact Submissions</h3>
+                <div class="admin-card-header">
+                    <div>
+                        <h3>Recent Contact Submissions</h3>
+                        <p>Track new inquiries, review messages, and keep the inbox tidy.</p>
+                    </div>
+                    {% if stats.unread_contacts %}
+                    <span class="unread-pill">{{ stats.unread_contacts }} unread</span>
+                    {% endif %}
+                </div>
                 {% if contacts %}
                 <div style="overflow-x:auto;">
                     <table class="admin-table">
                         <thead>
                             <tr>
+                                <th>Status</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Company</th>
                                 <th>Service</th>
                                 <th>Date</th>
                                 <th>Message</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for c in contacts[:20] %}
-                            <tr>
+                            <tr class="{{ 'unread-row' if not c.is_read else '' }}">
+                                <td>
+                                    <span class="message-status {{ 'unread' if not c.is_read else 'read' }}">
+                                        {{ 'Unread' if not c.is_read else 'Read' }}
+                                    </span>
+                                </td>
                                 <td><strong>{{ c.name }}</strong></td>
                                 <td>{{ c.email }}</td>
                                 <td>{{ c.company or '—' }}</td>
@@ -135,6 +154,21 @@
                                 <td>{{ c.created_at[:10] }}</td>
                                 <td style="max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
                                     {{ c.message[:80] }}{% if c.message|length > 80 %}...{% endif %}
+                                </td>
+                                <td>
+                                    <div class="admin-actions">
+                                        <a href="{{ url_for('admin_view_contact', contact_id=c.id) }}" class="action-btn action-primary">View</a>
+                                        <form method="post" action="{{ url_for('admin_toggle_contact_read', contact_id=c.id) }}" style="display:inline;">
+                                            <button type="submit" class="action-btn action-neutral">
+                                                {{ 'Unread' if c.is_read else 'Read' }}
+                                            </button>
+                                        </form>
+                                        <form method="post" action="{{ url_for('admin_delete_contact', contact_id=c.id) }}"
+                                              style="display:inline;"
+                                              onsubmit="return confirm('Delete this contact submission?')">
+                                            <button type="submit" class="action-btn action-danger">Delete</button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}

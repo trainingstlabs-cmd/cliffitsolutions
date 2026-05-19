@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Submission | cliffIT Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include "admin/_sidebar.html" %}
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h2>Contact Submission</h2>
+            <a href="{{ url_for('admin_dashboard') }}" style="font-size:0.9rem; color:var(--gray-500);">&larr; Back to Dashboard</a>
+        </div>
+        <div class="admin-content">
+            <div class="admin-card contact-detail-card">
+                <div class="contact-detail-header">
+                    <div>
+                        <span class="message-status read">Read</span>
+                        <h3>{{ contact.name }}</h3>
+                        <p>{{ contact.created_at }}</p>
+                    </div>
+                    <div class="admin-actions">
+                        <a class="action-btn action-primary" href="mailto:{{ contact.email }}?subject=Re:%20Your%20cliffIT%20Solutions%20inquiry">Reply</a>
+                        <form method="post" action="{{ url_for('admin_toggle_contact_read', contact_id=contact.id) }}" style="display:inline;">
+                            <button type="submit" class="action-btn action-neutral">Mark Unread</button>
+                        </form>
+                        <form method="post" action="{{ url_for('admin_delete_contact', contact_id=contact.id) }}"
+                              style="display:inline;"
+                              onsubmit="return confirm('Delete this contact submission?')">
+                            <button type="submit" class="action-btn action-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="contact-detail-grid">
+                    <div>
+                        <span>Email</span>
+                        <strong><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></strong>
+                    </div>
+                    <div>
+                        <span>Phone</span>
+                        <strong>{{ contact.phone or '—' }}</strong>
+                    </div>
+                    <div>
+                        <span>Company</span>
+                        <strong>{{ contact.company or '—' }}</strong>
+                    </div>
+                    <div>
+                        <span>Service</span>
+                        <strong>{{ contact.service or '—' }}</strong>
+                    </div>
+                </div>
+
+                <div class="contact-message-box">
+                    <h4>Message</h4>
+                    <p>{{ contact.message }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
